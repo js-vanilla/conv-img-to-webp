@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>image-to-webp example</title>
+  </head>
+  <body>
+    <input id="file" type="file" accept="image/jpeg,image/png,image/gif,image/tiff,image/jp2,.j2k,.jpc,.jp2,.tif,.tiff" />
+    <label>
+      TIFF page, zero based:
+      <input id="page" type="number" min="0" placeholder="required only for multi-page TIFF" />
+    </label>
+    <button id="convert">Convert</button>
+    <p id="status"></p>
+    <img id="preview" alt="Converted WebP preview" />
+
+    <script type="module">
+      import { convertToWebP } from '../src/index.js';
+
+      const status = document.querySelector('#status');
+      const preview = document.querySelector('#preview');
+      const fileInput = document.querySelector('#file');
+      const pageInput = document.querySelector('#page');
+
+      document.querySelector('#convert').addEventListener('click', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+
+        status.textContent = 'Converting...';
+        try {
+          const page = pageInput.value === '' ? undefined : Number(pageInput.value);
+          const webp = await convertToWebP(file, { quality: 0.9, page });
+          const url = URL.createObjectURL(webp);
+          preview.src = url;
+          status.textContent = `Converted to ${Math.round(webp.size / 1024)} KiB WebP.`;
+        } catch (error) {
+          status.textContent = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>

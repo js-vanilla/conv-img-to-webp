@@ -1,0 +1,65 @@
+{
+  "name": "@cyfung/image-to-webp",
+  "version": "0.1.0",
+  "description": "Pure JavaScript browser library for converting JPG, JPEG, JPEG 2000, JP2, GIF, PNG, and TIFF images to WebP.",
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@10.0.0",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./detect": {
+      "types": "./dist/detect.d.ts",
+      "import": "./dist/detect.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "pnpm clean && rspack build && node scripts/copy-types.mjs",
+    "dev": "rspack build --watch --mode development",
+    "test": "vitest run",
+    "lint": "tsc --noEmit",
+    "pack:zip": "pnpm build && node scripts/zip.mjs"
+  },
+  "dependencies": {
+    "jpeg2000": "^1.1.1",
+    "utif2": "^4.1.0"
+  },
+  "devDependencies": {
+    "@rspack/cli": "^2.0.0",
+    "@rspack/core": "^2.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "keywords": [
+    "webp",
+    "image",
+    "converter",
+    "jpeg2000",
+    "jp2",
+    "tiff",
+    "png",
+    "gif",
+    "browser",
+    "esm",
+    "rspack"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  }
+}
