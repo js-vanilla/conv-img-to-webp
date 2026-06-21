@@ -23,6 +23,12 @@
       const fileInput = document.querySelector('#file');
       const pageInput = document.querySelector('#page');
 
+      let currentPreviewUrl;
+
+      window.addEventListener('beforeunload', () => {
+        if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+      });
+
       document.querySelector('#convert').addEventListener('click', async () => {
         const file = fileInput.files && fileInput.files[0];
         if (!file) return;
@@ -31,8 +37,9 @@
         try {
           const page = pageInput.value === '' ? undefined : Number(pageInput.value);
           const webp = await convertToWebP(file, { quality: 0.9, page });
-          const url = URL.createObjectURL(webp);
-          preview.src = url;
+          if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+          currentPreviewUrl = URL.createObjectURL(webp);
+          preview.src = currentPreviewUrl;
           status.textContent = `Converted to ${Math.round(webp.size / 1024)} KiB WebP.`;
         } catch (error) {
           status.textContent = error.message;

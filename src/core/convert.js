@@ -1,7 +1,7 @@
-import { throwIfAborted } from './assert.js';
+import { assertInputSize, throwIfAborted } from './assert.js';
 import { rasterToCanvas } from './canvas.js';
 import { detectImageType, ImageType, isJpeg2000, isTiff, normalizeMimeType } from './detect.js';
-import { UnsupportedFormatError } from './errors.js';
+import { DecodeError, UnsupportedFormatError } from './errors.js';
 import { getMimeHint, toArrayBuffer } from './input.js';
 import { decodeNativeToCanvas } from '../decoders/native.js';
 import { encodeCanvasToWebP } from '../encoder/webp.js';
@@ -10,12 +10,27 @@ function isNativeBrowserType(type) {
   return type === ImageType.JPEG || type === ImageType.PNG || type === ImageType.GIF;
 }
 
+async function readInputBytes(input, options) {
+  try {
+    const arrayBuffer = await toArrayBuffer(input);
+    assertInputSize(arrayBuffer.byteLength, options);
+    return arrayBuffer;
+  } catch (error) {
+    if (error && (error.code === 'ABORTED' || error.code === 'DECODE_ERROR')) throw error;
+    if (error instanceof TypeError) throw error;
+    throw new DecodeError('Failed to read image input.', error);
+  }
+}
+
 async function decodeToCanvas(input, options) {
   throwIfAborted(options.signal);
 
   const mimeHint = normalizeMimeType(options.mimeType || getMimeHint(input));
-  const arrayBuffer = await toArrayBuffer(input);
-  const type = normalizeMimeType(options.type) || detectImageType(new Uint8Array(arrayBuffer, 0, Math.min(arrayBuffer.byteLength, 64)), mimeHint);
+  const arrayBuffer = await readInputBytes(input, options);
+  throwIfAborted(options.signal);
+
+  const header = new Uint8Array(arrayBuffer, 0, Math.min(arrayBuffer.byteLength, 64));
+  const type = normalizeMimeType(options.type) || detectImageType(header, mimeHint);
 
   if (!type) {
     throw new UnsupportedFormatError('Could not detect image type. Supported input formats are JPG/JPEG, JPEG 2000/JP2/J2K, GIF, PNG, and TIFF.');

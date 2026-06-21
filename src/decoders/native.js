@@ -1,4 +1,4 @@
-import { throwIfAborted } from '../core/assert.js';
+import { assertImageDimensions, throwIfAborted } from '../core/assert.js';
 import { closeBitmap, createCanvas, get2dContext } from '../core/canvas.js';
 import { DecodeError } from '../core/errors.js';
 import { toBlob } from '../core/input.js';
@@ -22,12 +22,16 @@ export async function decodeNativeToCanvas(input, mimeType, options = {}) {
     }
 
     throwIfAborted(options.signal);
-    const canvas = createCanvas(bitmap.width || bitmap.naturalWidth, bitmap.height || bitmap.naturalHeight, options.canvasFactory);
+    const width = bitmap.width || bitmap.naturalWidth;
+    const height = bitmap.height || bitmap.naturalHeight;
+    assertImageDimensions(width, height, options);
+
+    const canvas = createCanvas(width, height, options.canvasFactory, options);
     const ctx = get2dContext(canvas, { willReadFrequently: false });
     ctx.drawImage(bitmap, 0, 0);
     return canvas;
   } catch (error) {
-    if (error && error.code === 'ABORTED') throw error;
+    if (error && (error.code === 'ABORTED' || error.code === 'DECODE_ERROR')) throw error;
     throw new DecodeError(`Native browser decoding failed for ${mimeType}.`, error);
   } finally {
     closeBitmap(bitmap);

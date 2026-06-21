@@ -17,8 +17,8 @@ export function normalizeMimeType(mime) {
   if (clean === 'image/jpg' || clean === 'image/pjpeg') return JPEG;
   if (clean === 'image/x-png') return PNG;
   if (clean === 'image/tif' || clean === 'image/x-tiff') return TIFF;
-  if (clean === 'image/jpeg2000' || clean === 'image/jpx' || clean === 'image/jpm') return JP2;
-  if (clean === 'image/x-jp2') return JP2;
+  if (clean === 'image/jpeg2000' || clean === 'image/jp2' || clean === 'image/x-jp2' || clean === 'image/jpx' || clean === 'image/jpm') return JP2;
+  if (clean === 'image/j2k' || clean === 'image/x-j2k' || clean === 'image/jpc' || clean === 'image/x-jpc') return J2K;
   return clean || undefined;
 }
 

@@ -1,4 +1,4 @@
-import { throwIfAborted } from '../core/assert.js';
+import { assertImageDimensions, assertInputSize, assertRgbaBufferLength, throwIfAborted } from '../core/assert.js';
 import { DecodeError, InvalidPageError, MissingPageError } from '../core/errors.js';
 import { toArrayBuffer } from '../core/input.js';
 
@@ -15,23 +15,38 @@ function assertPage(page, pageCount) {
   }
 }
 
-export async function getTiffPageCount(input) {
-  const [arrayBuffer, moduleNamespace] = await Promise.all([toArrayBuffer(input), import('utif2')]);
+async function readTiffBytes(input, options) {
+  const arrayBuffer = await toArrayBuffer(input);
+  assertInputSize(arrayBuffer.byteLength, options);
+  return arrayBuffer;
+}
+
+export async function getTiffPageCount(input, options = {}) {
+  throwIfAborted(options.signal);
+  const [arrayBuffer, moduleNamespace] = await Promise.all([readTiffBytes(input, options), import('utif2')]);
   const UTIF = resolveUTIF(moduleNamespace);
-  const ifds = UTIF.decode(arrayBuffer);
-  return ifds.length;
+
+  try {
+    const ifds = UTIF.decode(arrayBuffer);
+    if (!Array.isArray(ifds)) throw new DecodeError('TIFF decoder returned an invalid page list.');
+    return ifds.length;
+  } catch (error) {
+    if (error instanceof DecodeError) throw error;
+    throw new DecodeError('Failed to count TIFF pages.', error);
+  }
 }
 
 export async function decodeTiff(input, options = {}) {
   throwIfAborted(options.signal);
 
-  const [arrayBuffer, moduleNamespace] = await Promise.all([toArrayBuffer(input), import('utif2')]);
+  const [arrayBuffer, moduleNamespace] = await Promise.all([readTiffBytes(input, options), import('utif2')]);
   const UTIF = resolveUTIF(moduleNamespace);
 
   try {
     const ifds = UTIF.decode(arrayBuffer);
-    const pageCount = ifds.length;
+    if (!Array.isArray(ifds)) throw new DecodeError('TIFF decoder returned an invalid page list.');
 
+    const pageCount = ifds.length;
     if (pageCount === 0) {
       throw new DecodeError('TIFF file contains no pages/images.');
     }
@@ -47,15 +62,22 @@ export async function decodeTiff(input, options = {}) {
     UTIF.decodeImage(arrayBuffer, ifd, ifds);
     throwIfAborted(options.signal);
 
+    const width = ifd.width;
+    const height = ifd.height;
+    assertImageDimensions(width, height, options);
+
     const rgba = UTIF.toRGBA8(ifd);
-    if (!rgba || !ifd.width || !ifd.height) {
+    if (!rgba) {
       throw new DecodeError(`Failed to decode TIFF page ${page}.`);
     }
 
+    const data = rgba instanceof Uint8Array ? rgba : new Uint8Array(rgba);
+    assertRgbaBufferLength(data, width, height);
+
     return {
-      data: rgba instanceof Uint8Array ? rgba : new Uint8Array(rgba),
-      width: ifd.width,
-      height: ifd.height,
+      data,
+      width,
+      height,
       page,
       pageCount,
       format: 'image/tiff'

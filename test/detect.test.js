@@ -32,6 +32,8 @@ describe('detectImageType', () => {
     expect(normalizeMimeType('image/jpg')).toBe(ImageType.JPEG);
     expect(normalizeMimeType('image/x-tiff')).toBe(ImageType.TIFF);
     expect(normalizeMimeType('image/jpeg2000')).toBe(ImageType.JP2);
+    expect(normalizeMimeType('image/x-j2k')).toBe(ImageType.J2K);
+    expect(normalizeMimeType('image/jpc')).toBe(ImageType.J2K);
   });
 
   it('reports format groups', () => {

@@ -1,8 +1,8 @@
-import { assertPositiveDimensions } from './assert.js';
+import { assertImageDimensions, assertRgbaBufferLength } from './assert.js';
 import { EncodeError } from './errors.js';
 
-export function createCanvas(width, height, factory) {
-  assertPositiveDimensions(width, height);
+export function createCanvas(width, height, factory, options = {}) {
+  assertImageDimensions(width, height, options);
 
   if (factory) {
     const canvas = factory(width, height);
@@ -37,9 +37,15 @@ export function closeBitmap(bitmap) {
 }
 
 export function rasterToCanvas(raster, options = {}) {
-  const canvas = createCanvas(raster.width, raster.height, options.canvasFactory);
+  assertImageDimensions(raster.width, raster.height, options);
+  assertRgbaBufferLength(raster.data, raster.width, raster.height);
+
+  const canvas = createCanvas(raster.width, raster.height, options.canvasFactory, options);
   const ctx = get2dContext(canvas, { willReadFrequently: false });
-  const imageData = new ImageData(new Uint8ClampedArray(raster.data.buffer, raster.data.byteOffset, raster.data.byteLength), raster.width, raster.height);
+  const rgba = raster.data instanceof Uint8ClampedArray
+    ? raster.data
+    : new Uint8ClampedArray(raster.data.buffer, raster.data.byteOffset, raster.data.byteLength);
+  const imageData = new ImageData(rgba, raster.width, raster.height);
   ctx.putImageData(imageData, 0, 0);
   return canvas;
 }

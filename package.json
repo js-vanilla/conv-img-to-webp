@@ -1,6 +1,6 @@
 {
   "name": "conv-img-to-webp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pure JavaScript browser library for converting JPG, JPEG, JPEG 2000, JP2, GIF, PNG, and TIFF images to WebP.",
   "type": "module",
   "license": "MIT",

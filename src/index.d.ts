@@ -23,6 +23,14 @@ export interface ConvertToWebPOptions<TOutput extends WebPOutputKind = 'blob'> {
   page?: number;
   /** AbortSignal checked between decode/encode stages. */
   signal?: AbortSignal;
+  /** Maximum input size in bytes before decode. Defaults to 100 MiB. */
+  maxInputBytes?: number;
+  /** Maximum decoded pixel count before allocating RGBA/canvas buffers. Defaults to 50,000,000. */
+  maxPixels?: number;
+  /** Maximum decoded image width. Defaults to 20,000. */
+  maxWidth?: number;
+  /** Maximum decoded image height. Defaults to 20,000. */
+  maxHeight?: number;
   /** Browser image orientation option used for native JPEG/PNG/GIF decoding. */
   imageOrientation?: ImageOrientation;
   /** Browser color-space conversion option used for native JPEG/PNG/GIF decoding. */
@@ -54,7 +62,7 @@ export declare function detectImageType(bytesOrBuffer: Uint8Array | ArrayBuffer,
 export declare function normalizeMimeType(mime?: string): string | undefined;
 export declare function isTiff(type?: string): boolean;
 export declare function isJpeg2000(type?: string): boolean;
-export declare function getTiffPageCount(input: ImageInput): Promise<number>;
+export declare function getTiffPageCount(input: ImageInput, options?: Pick<ConvertToWebPOptions, 'signal' | 'maxInputBytes'>): Promise<number>;
 
 export interface RasterImage {
   data: Uint8Array;
