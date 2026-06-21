@@ -1,4 +1,4 @@
-# @cyfung/image-to-webp
+# conv-img-to-webp
 
 Pure JavaScript, ESM-first browser library for converting JPG/JPEG, JPEG 2000/JP2/J2K, GIF, PNG, and TIFF images to WebP.
 
@@ -15,7 +15,7 @@ The common path for JPEG, PNG, and GIF uses the browser's native image decoder p
 ## Install
 
 ```bash
-pnpm add @cyfung/image-to-webp
+pnpm add conv-img-to-webp
 ```
 
 For local development from this repository:
@@ -29,7 +29,7 @@ pnpm test
 ## Usage
 
 ```js
-import { convertToWebP } from '@cyfung/image-to-webp';
+import { convertToWebP } from 'conv-img-to-webp';
 
 const webpBlob = await convertToWebP(file, {
   quality: 0.9
@@ -54,7 +54,7 @@ const dataUrl = await convertToWebP(file, {
 Multi-page TIFFs are intentionally strict. A caller must pass a zero-based page number. If the TIFF has more than one page and no page is provided, the library throws `MissingPageError` with code `TIFF_PAGE_REQUIRED`.
 
 ```js
-import { convertToWebP, getTiffPageCount } from '@cyfung/image-to-webp';
+import { convertToWebP, getTiffPageCount } from 'conv-img-to-webp';
 
 const pageCount = await getTiffPageCount(tiffFile);
 const webp = await convertToWebP(tiffFile, {
@@ -108,7 +108,7 @@ Returns the number of TIFF pages/images without converting to WebP.
 The package sets `sideEffects: false`, uses ESM exports, and builds with Rspack 2.0 `modern-module` output. TIFF and JPEG 2000 codecs are imported only when those formats are converted.
 
 ```js
-import { detectImageType } from '@cyfung/image-to-webp/detect';
+import { detectImageType } from 'conv-img-to-webp/detect';
 ```
 
 ## Rspack 2.0

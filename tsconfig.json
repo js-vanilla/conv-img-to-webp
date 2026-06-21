@@ -11,5 +11,6 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src/**/*.js", "test/**/*.js"]
+  "include": ["src/**/*.js", "src/**/*.d.ts"],
+  "exclude": ["dist", "node_modules"]
 }

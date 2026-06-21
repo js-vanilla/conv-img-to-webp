@@ -1,5 +1,5 @@
 {
-  "name": "@cyfung/image-to-webp",
+  "name": "conv-img-to-webp",
   "version": "0.1.0",
   "description": "Pure JavaScript browser library for converting JPG, JPEG, JPEG 2000, JP2, GIF, PNG, and TIFF images to WebP.",
   "type": "module",
@@ -30,11 +30,11 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "clean": "node scripts/clean.mjs",
-    "build": "pnpm clean && rspack build && node scripts/copy-types.mjs",
+    "build": "node scripts/clean.mjs && rspack build && node scripts/copy-types.mjs",
     "dev": "rspack build --watch --mode development",
     "test": "vitest run",
     "lint": "tsc --noEmit",
-    "pack:zip": "pnpm build && node scripts/zip.mjs"
+    "pack:zip": "pnpm run build && node scripts/zip.mjs"
   },
   "dependencies": {
     "jpeg2000": "^1.1.1",

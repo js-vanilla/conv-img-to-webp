@@ -21,10 +21,21 @@ function packedToRgba(items, components, width, height) {
     return rgba;
   }
 
+  if (components === 2) {
+    for (let i = 0, j = 0, k = 0; i < pixelCount; i += 1, j += 2, k += 4) {
+      const v = items[j];
+      rgba[k] = v;
+      rgba[k + 1] = v;
+      rgba[k + 2] = v;
+      rgba[k + 3] = items[j + 1];
+    }
+    return rgba;
+  }
+
   for (let i = 0, j = 0, k = 0; i < pixelCount; i += 1, j += components, k += 4) {
     rgba[k] = items[j];
-    rgba[k + 1] = components > 1 ? items[j + 1] : items[j];
-    rgba[k + 2] = components > 2 ? items[j + 2] : items[j];
+    rgba[k + 1] = items[j + 1];
+    rgba[k + 2] = items[j + 2];
     rgba[k + 3] = components > 3 ? items[j + 3] : 255;
   }
   return rgba;
