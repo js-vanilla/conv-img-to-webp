@@ -9,9 +9,9 @@ export default {
   mode: isProduction ? 'production' : 'development',
   target: ['web', 'es2015'],
   entry: {
-    index: './src/index.js',
-    detect: './src/core/detect.js',
-    errors: './src/core/errors.js'
+    index: './src/index.ts',
+    detect: './src/detect.ts',
+    errors: './src/errors.ts'
   },
   output: {
     path: resolve(__dirname, 'dist'),
@@ -23,15 +23,42 @@ export default {
     },
     clean: true,
     environment: {
-      module: true,
-      dynamicImport: true,
       arrowFunction: true,
       const: true,
-      destructuring: true
+      destructuring: true,
+      dynamicImport: true,
+      module: true
     }
   },
   experiments: {
     outputModule: true
+  },
+  resolve: {
+    extensions: ['.ts', '.js', '.json'],
+    extensionAlias: {
+      '.js': ['.ts', '.js']
+    }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        loader: 'builtin:swc-loader',
+        options: {
+          jsc: {
+            parser: {
+              syntax: 'typescript'
+            },
+            target: 'es2015'
+          },
+          module: {
+            type: 'es6'
+          }
+        },
+        type: 'javascript/auto'
+      }
+    ]
   },
   externalsType: 'module',
   externals: {

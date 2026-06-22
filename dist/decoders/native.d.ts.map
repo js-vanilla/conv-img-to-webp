@@ -1,0 +1,1 @@
+{"version":3,"file":"native.d.ts","sourceRoot":"","sources":["../../src/decoders/native.ts"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,UAAU,EAAE,oBAAoB,EAAE,cAAc,EAAE,UAAU,EAAE,kBAAkB,EAAE,MAAM,aAAa,CAAC;AAgBpH,wBAAsB,oBAAoB,CAAC,KAAK,EAAE,UAAU,EAAE,QAAQ,EAAE,kBAAkB,EAAE,OAAO,GAAE,oBAAoB,CAAC,cAAc,CAAM,GAAG,OAAO,CAAC,UAAU,CAAC,CAgCnK"}

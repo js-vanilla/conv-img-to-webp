@@ -1,7 +1,7 @@
 {
   "name": "conv-img-to-webp",
   "version": "0.1.1",
-  "description": "Pure JavaScript browser library for converting JPG, JPEG, JPEG 2000, JP2, GIF, PNG, and TIFF images to WebP.",
+  "description": "TypeScript, ESM-first browser library for converting JPG, JPEG 2000, GIF, PNG, and TIFF images to WebP.",
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@10.0.0",
@@ -10,7 +10,8 @@
     "dist",
     "src",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "tsconfig.build.json"
   ],
   "exports": {
     ".": {
@@ -30,10 +31,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "clean": "node scripts/clean.mjs",
-    "build": "node scripts/clean.mjs && rspack build && node scripts/copy-types.mjs",
+    "build": "node scripts/clean.mjs && rspack build && tsc -p tsconfig.build.json && node scripts/copy-types.mjs",
     "dev": "rspack build --watch --mode development",
     "test": "vitest run",
-    "lint": "tsc --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit",
     "pack:zip": "pnpm run build && node scripts/zip.mjs"
   },
   "dependencies": {

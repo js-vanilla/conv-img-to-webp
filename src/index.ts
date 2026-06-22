@@ -1,0 +1,35 @@
+export { convertToWebP, convertToWebPWithMetadata } from './core/convert.js';
+export {
+  check_webp_feature,
+  checkWebPFeature,
+  detectImageType,
+  ImageType,
+  isJpeg2000,
+  isTiff,
+  normalizeMimeType
+} from './core/detect.js';
+export { getTiffPageCount, decodeTiff } from './decoders/tiff.js';
+export { decodeJpeg2000 } from './decoders/jpeg2000.js';
+export { encodeCanvasToWebP } from './encoder/webp.js';
+export {
+  AbortConversionError,
+  DecodeError,
+  EncodeError,
+  ImageToWebPError,
+  InvalidPageError,
+  MissingPageError,
+  UnsupportedFormatError
+} from './core/errors.js';
+export type {
+  CanvasLike,
+  ConversionResult,
+  ConvertToWebPOptions,
+  ImageInput,
+  OutputFor,
+  RasterImage,
+  ResourceLimitsOptions,
+  SupportedImageType,
+  WebPFeature,
+  WebPFeatureCallback,
+  WebPOutputKind
+} from './types.js';

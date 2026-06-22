@@ -1,14 +1,14 @@
 # conv-img-to-webp
 
-Pure JavaScript, ESM-first browser library for converting JPG/JPEG, JPEG 2000/JP2/J2K, GIF, PNG, and TIFF images to WebP.
+TypeScript, ESM-first browser library for converting JPG/JPEG, JPEG 2000/JP2/J2K, GIF, PNG, and TIFF images to WebP.
 
-The common path for JPEG, PNG, and GIF uses the browser's native image decoder plus canvas WebP encoding for high throughput. TIFF and JPEG 2000 codec packages are loaded only when those formats are converted. Specialized decoders now include stricter dimension, buffer, and component validation to avoid silent corrupt output on malformed files.
+The common path for JPEG, PNG, and GIF uses the browser's native image decoder plus canvas WebP encoding for high throughput. TIFF and JPEG 2000 codec packages are loaded only when those formats are converted. Specialized decoders include stricter dimension, buffer, and component validation to avoid silent corrupt output on malformed files.
 
 ## Requirements
 
 - Browser/runtime: ES2015+ syntax, `Blob`, `createImageBitmap` or `HTMLImageElement`, and canvas WebP encoding.
 - Package manager: pnpm.
-- Build tool: Rspack 2.0.
+- Build tool: Rspack 2.0 for runtime JavaScript; TypeScript emits declarations only.
 - TIFF decoding dependency: `utif2`.
 - JPEG 2000 decoding dependency: `jpeg2000`.
 
@@ -28,7 +28,7 @@ pnpm test
 
 ## Usage
 
-```js
+```ts
 import { convertToWebP } from 'conv-img-to-webp';
 
 const webpBlob = await convertToWebP(file, {
@@ -38,7 +38,7 @@ const webpBlob = await convertToWebP(file, {
 
 ### Output an ArrayBuffer or data URL
 
-```js
+```ts
 const bytes = await convertToWebP(file, {
   output: 'arrayBuffer',
   quality: 0.85
@@ -60,7 +60,7 @@ The library checks input size and decoded dimensions before allocating large RGB
 
 Override them only when your application can tolerate the memory and CPU cost:
 
-```js
+```ts
 const webp = await convertToWebP(file, {
   maxInputBytes: 200 * 1024 * 1024,
   maxPixels: 80_000_000,
@@ -73,7 +73,7 @@ const webp = await convertToWebP(file, {
 
 Multi-page TIFFs are intentionally strict. A caller must pass a zero-based page number. If the TIFF has more than one page and no page is provided, the library throws `MissingPageError` with code `TIFF_PAGE_REQUIRED`.
 
-```js
+```ts
 import { convertToWebP, getTiffPageCount } from 'conv-img-to-webp';
 
 const pageCount = await getTiffPageCount(tiffFile);
@@ -115,6 +115,20 @@ Returns `{ output, inputType, metadata }`. TIFF metadata includes `{ page, pageC
 
 Detects supported input types using magic bytes, falling back to a MIME hint when magic bytes are insufficient.
 
+### `checkWebPFeature(feature, callback?)`
+
+Detects native browser WebP feature support for `'lossy'`, `'lossless'`, `'alpha'`, or `'animation'`. It returns a `Promise<boolean>` when no callback is passed, and also exports the callback-compatible alias `check_webp_feature` for callers that want the original `callback(feature, result)` shape.
+
+```ts
+import { checkWebPFeature, check_webp_feature } from 'conv-img-to-webp';
+
+const supportsAlphaWebP = await checkWebPFeature('alpha');
+
+check_webp_feature('animation', (feature, supported) => {
+  console.log(feature, supported);
+});
+```
+
 ### `getTiffPageCount(input, options?)`
 
 Returns the number of TIFF pages/images without converting to WebP. Supports `signal` and `maxInputBytes` options.
@@ -131,13 +145,13 @@ Returns the number of TIFF pages/images without converting to WebP. Supports `si
 
 The package sets `sideEffects: false`, uses ESM exports, and builds with Rspack 2.0 `modern-module` output. Codec packages are imported only when their formats are converted.
 
-```js
+```ts
 import { detectImageType } from 'conv-img-to-webp/detect';
 ```
 
 ## Rspack 2.0
 
-`rspack.config.mjs` targets ES2015 browsers, emits ESM library output, preserves dynamic imports, and marks codec packages as ESM externals so downstream bundlers can split them effectively.
+`rspack.config.mjs` targets ES2015 browsers, transpiles TypeScript with Rspack/SWC, emits ESM library output, and marks codec packages as ESM externals so downstream bundlers can split them effectively. Type declarations are emitted with `tsc -p tsconfig.build.json`.
 
 ## Error handling
 
@@ -150,14 +164,14 @@ All custom errors extend `ImageToWebPError` and include a stable `code`:
 - `INVALID_TIFF_PAGE`
 - `ABORTED`
 
-```js
+```ts
 try {
   await convertToWebP(file);
 } catch (error) {
-  if (error.code === 'TIFF_PAGE_REQUIRED') {
+  if (error instanceof Error && 'code' in error && error.code === 'TIFF_PAGE_REQUIRED') {
     // Show a page picker to the caller.
   }
 }
 ```
 
-Invalid caller input, such as an unsupported `output` option or a non-image input type, may still throw `TypeError`.
+Invalid caller input, such as an unsupported `output` option, malformed data URL encoding, or a non-image input type, may still throw `TypeError`.

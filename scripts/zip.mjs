@@ -8,7 +8,7 @@ const name = basename(root);
 const out = join(parent, `${name}.zip`);
 
 await new Promise((resolve, reject) => {
-  const child = spawn('zip', ['-r', out, name, '-x', `${name}/node_modules/*`, `${name}/.git/*`, `${name}/coverage/*`], {
+  const child = spawn('zip', ['-r', out, name, '-x', `${name}/node_modules/*`, `${name}/.git/*`, `${name}/coverage/*`, `${name}/__MACOSX/*`], {
     cwd: parent,
     stdio: 'inherit'
   });

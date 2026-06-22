@@ -1,0 +1,1 @@
+{"version":3,"file":"jpeg2000.d.ts","sourceRoot":"","sources":["../../src/decoders/jpeg2000.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,oBAAoB,EAAE,cAAc,EAAE,UAAU,EAAE,WAAW,EAAE,MAAM,aAAa,CAAC;AAgLjG,wBAAsB,cAAc,CAAC,KAAK,EAAE,UAAU,EAAE,OAAO,GAAE,oBAAoB,CAAC,cAAc,CAAM,GAAG,OAAO,CAAC,WAAW,GAAG;IAAE,UAAU,EAAE,MAAM,CAAA;CAAE,CAAC,CA4CzJ"}
