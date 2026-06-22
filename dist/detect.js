@@ -1,2 +1,1 @@
-export { check_webp_feature, checkWebPFeature, detectImageType, ImageType, isJpeg2000, isTiff, normalizeMimeType } from './core/detect.js';
-//# sourceMappingURL=detect.js.map
+export{ImageType,checkWebPFeature,check_webp_feature,detectImageType,isJpeg2000,isTiff,normalizeMimeType}from"./70.js";
